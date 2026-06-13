@@ -57,7 +57,6 @@ model-traning:
     - name: Display MLflow URL
       run: |
         curl -s http://127.0.0.1:4040/api/tunnels
-
     - name: Model Building
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
