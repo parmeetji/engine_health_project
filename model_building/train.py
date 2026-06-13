@@ -17,24 +17,8 @@ from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
 import mlflow
 
 ############################
-from pyngrok import ngrok
-import subprocess
+mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
-# ngtoken=os.getenv("NGROK_TOKEN")
-# Set your auth token here (replace with your actual token)
-ngrok.set_auth_token("3F4pwjkSbQ8haRqVxCBOj5lhw5i_3GTAi5xyq5Lpyg5HAr7Ak")
-
-# Start MLflow UI on port 5000
-process = subprocess.Popen(["mlflow", "ui", "--port", "5000"])
-
-# Create public tunnel
-public_url = ngrok.connect(5000).public_url
-print("MLflow UI is available at:", public_url)
-
-# Set the tracking URL for MLflow
-mlflow.set_tracking_uri(public_url)
-
-# Set the name for the experiment
 mlflow.set_experiment("mlops-training-experiment")
 ############################
 
