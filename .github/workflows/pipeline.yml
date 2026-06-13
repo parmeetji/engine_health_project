@@ -62,3 +62,12 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python model_building/train.py
+
+        - name: Display MLflow URL Again
+          run: |
+          curl -s http://127.0.0.1:4040/api/tunnels
+
+        - name: Keep MLflow Alive for Inspection
+          run: |
+            echo "MLflow UI will remain available for 30 minutes"
+            sleep 1800
