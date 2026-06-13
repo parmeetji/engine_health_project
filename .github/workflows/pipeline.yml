@@ -11,8 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Install Dependencies
         run: pip install -r requirements.txt
+
       - name: Upload Dataset to Hugging Face Hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -23,8 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Install Dependencies
         run: pip install -r requirements.txt
+
       - name: Run Data Preparation
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -61,13 +65,14 @@ jobs:
       - name: Model Building
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python model_building/train.py
+        run: |
+          python model_building/train.py
 
-        - name: Display MLflow URL Again
-          run: |
+      - name: Display MLflow URL Again
+        run: |
           curl -s http://127.0.0.1:4040/api/tunnels
 
-        - name: Keep MLflow Alive for Inspection
-          run: |
-            echo "MLflow UI will remain available for 30 minutes"
-            sleep 1800
+      - name: Keep MLflow Alive for Inspection
+        run: |
+          echo "MLflow UI will remain available for 30 minutes"
+          sleep 600
