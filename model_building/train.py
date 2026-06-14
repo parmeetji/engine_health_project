@@ -94,7 +94,7 @@ with mlflow.start_run():
     mlflow.log_params(grid_search.best_params_)
 
     # Logging best CV score
-    mlflow.log_params("best_cv_score",grid_search.best_score_)
+    mlflow.log_metric("best_cv_score",grid_search.best_score_)
 
     # Storing and evaluating the best model
     best_model = grid_search.best_estimator_
