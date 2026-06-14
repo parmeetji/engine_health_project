@@ -16,14 +16,7 @@ from huggingface_hub import login, HfApi, create_repo
 from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
 import mlflow
 
-############################
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
-
-mlflow.set_experiment("mlops-training-experiment")
-############################
-
 api = HfApi()
-
 
 Xtrain_path = "hf://datasets/Pammi123/engine-health-prediction/Xtrain.csv"
 Xtest_path = "hf://datasets/Pammi123/engine-health-prediction/Xtest.csv"
@@ -70,27 +63,38 @@ param_grid = {
 # Model pipeline
 model_pipeline = make_pipeline(preprocessor, xgb_model)
 
+mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_experiment("mlops-training-experiment")
+
 # Starting MLflow run
 with mlflow.start_run():
     # Hyperparameter tuning
-    grid_search = GridSearchCV(model_pipeline, param_grid, cv=5, n_jobs=-1, scoring='precision')
+    grid_search = GridSearchCV(model_pipeline, param_grid, cv=5, n_jobs=-1, scoring='f1')
     grid_search.fit(Xtrain, ytrain)
 
     # Logging all parameter combinations and their mean test scores
     results = grid_search.cv_results_
+    best_index = grid_search.best_index_
+
     for i in range(len(results['params'])):
         param_set = results['params'][i]
         mean_score = results['mean_test_score'][i]
         std_score = results['std_test_score'][i]
 
         # Logging each combination as a separate MLflow run
-        with mlflow.start_run(nested=True):
+        with mlflow.start_run(
+            nested=True,
+            run_name=f"Trial_{i+1}"):
             mlflow.log_params(param_set)
             mlflow.log_metric("mean_test_score", mean_score)
             mlflow.log_metric("std_test_score", std_score)
+            mlflow.log_metric("best_index", best_index)
 
     # Logging best parameters separately in main run
     mlflow.log_params(grid_search.best_params_)
+
+    # Logging best CV score
+    mlflow.log_params("best_cv_score",grid_search.best_score_)
 
     # Storing and evaluating the best model
     best_model = grid_search.best_estimator_
