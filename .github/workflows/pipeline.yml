@@ -75,7 +75,7 @@ jobs:
       - name: Keep MLflow Alive for Inspection
         run: |
           echo "MLflow UI will remain available for 5 minutes"
-          sleep 300
+          sleep 1200
 
   deploy-hosting:
     runs-on: ubuntu-latest
